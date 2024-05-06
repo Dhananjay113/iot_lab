@@ -1,3 +1,4 @@
+//////////sender//////////////
 #include <SoftwareSerial.h>
 #define RX_PIN 2 
 #define TX_PIN 3 
@@ -15,7 +16,9 @@ void loop() {
  xbeeSerial.write('G');
  delay(3000); 
 }
-Receiver code:
+
+
+///////////Receiver code///////////////
 #include <SoftwareSerial.h>
 10
 #define RX_PIN 2 
