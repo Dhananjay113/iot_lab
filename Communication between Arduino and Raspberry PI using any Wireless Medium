@@ -1,0 +1,49 @@
+#include <SoftwareSerial.h>
+#define RX_PIN 2 
+#define TX_PIN 3 
+SoftwareSerial xbeeSerial(RX_PIN, TX_PIN); // RX, TX
+void setup () {
+ pinMode(RX_PIN, INPUT);
+ pinMode(TX_PIN, OUTPUT);
+ Serial.begin(9600);
+ xbeeSerial.begin(9600);
+}
+void loop() {
+ xbeeSerial.write('R');
+ delay(1000); 
+ 
+ xbeeSerial.write('G');
+ delay(1000); 
+}
+31
+Receiver code:
+import serial
+import RPi.GPIO as GPIO
+import time
+RED_LED_PIN = 17
+GREEN_LED_PIN = 27
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(RED_LED_PIN, GPIO.OUT)
+GPIO.setup(GREEN_LED_PIN, GPIO.OUT)
+ser = serial.Serial('/dev/ttyS0', 9600) # Assuming the XBee is connected to the Pi's GPIO 
+serial port
+try:
+ while True:
+ if ser.in_waiting > 0:
+ received_char = ser.read().decode('utf-8')
+ if received_char == 'R':
+ print("Turning on the red LED")
+ GPIO.output(RED_LED_PIN, GPIO.HIGH) 
+ time.sleep(1) # Wait for 3 seconds
+ GPIO.output(RED_LED_PIN, GPIO.LOW) 
+ print("Red LED turned off")
+ elif received_char == 'G':
+ print("Turning on the green LED")
+ GPIO.output(GREEN_LED_PIN, GPIO.HIGH) 
+ time.sleep(1) # Wait for 3 seconds
+ GPIO.output(GREEN_LED_PIN, GPIO.LOW) 
+ print("Green LED turned off")
+except KeyboardInterrupt:
+ ser.close()
+ GPIO.cleanup()
+
