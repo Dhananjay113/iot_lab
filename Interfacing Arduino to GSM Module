@@ -1,0 +1,43 @@
+#include <SoftwareSerial.h>
+SoftwareSerial mySerial(9, 10); //(tx, rx)
+void setup() {
+ mySerial.begin(9600); // Setting the baud rate of GSM Module
+ Serial.begin(9600); // Setting the baud rate of Serial Monitor (Arduino)
+ delay(100);
+}
+void loop() {
+ if (Serial.available() > 0) {
+ switch (Serial.read()) {
+ case 's':
+ sendSMS("+910000000000", "HELLO"); // Function to send SMS
+ break;
+ case 'c':
+ checkSIMStatus(); // Function to check SIM status
+ break;
+ }
+ }
+ if (mySerial.available() > 0) {
+ Serial.write(mySerial.read());
+ }
+}
+void sendSMS(const char* phoneNumber, const char* message) {
+ mySerial.println("AT+CMGF=1"); // Sets the GSM Module in Text Mode
+ delay(1000); // Delay of 1 second
+ mySerial.print("AT+CMGS=\"");
+ mySerial.print(phoneNumber);
+14
+ mySerial.println("\"");
+ delay(1000);
+ mySerial.print(message); // The SMS text you want to send
+ mySerial.write(0x1A); // ASCII code of CTRL+Z for saying the end of SMS to the module
+ delay(1000);
+}
+void checkSIMStatus() {
+ mySerial.println("AT+CPIN?"); // AT Command to check SIM card status
+ delay(500);
+ if (mySerial.find("READY")) {
+ Serial.println("SIM card is ready");
+ } else {
+ Serial.println("SIM card is not ready");
+ }
+}
