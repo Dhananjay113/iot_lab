@@ -1,0 +1,62 @@
+IR Sensor:
+import RPi.GPIO as GPIO
+import time
+# Set GPIO mode
+GPIO.setmode(GPIO.BCM)
+# Define GPIO pin for the sensor
+IR_SENSOR_PIN = 17
+# Setup the GPIO pin
+GPIO.setup(IR_SENSOR_PIN, GPIO.IN)
+try:
+ print("IR Sensor Test (Ctrl+C to exit)")
+ while True:
+ if GPIO.input(IR_SENSOR_PIN):
+ print("Obstacle Detected")
+ else:
+ print("No Obstacle")
+ time.sleep(0.1)
+except KeyboardInterrupt:
+ print("Exiting...")
+ GPIO.cleanup()
+26
+Ultrasonic Sensor:
+import RPi.GPIO as GPIO
+import time
+# Set GPIO mode
+GPIO.setmode(GPIO.BCM)
+# Define GPIO pins for the sensor
+TRIG_PIN = 17
+ECHO_PIN = 18
+# Setup GPIO pins
+GPIO.setup(TRIG_PIN, GPIO.OUT)
+GPIO.setup(ECHO_PIN, GPIO.IN)
+def distance():
+ # Trigger pulse
+ GPIO.output(TRIG_PIN, True)
+ time.sleep(0.00001)
+ GPIO.output(TRIG_PIN, False)
+ 
+ # Measure the time taken for the pulse to return
+ while GPIO.input(ECHO_PIN) == 0:
+ pulse_start = time.time()
+ 
+ while GPIO.input(ECHO_PIN) == 1:
+ pulse_end = time.time()
+ 
+ pulse_duration = pulse_end - pulse_start
+ 
+ # Calculate distance (speed of sound = 34300 cm/s)
+ distance = pulse_duration * 34300 / 2
+ 
+ return distance
+try:
+ print("Ultrasonic Sensor Test (Ctrl+C to exit)")
+ while True:
+ dist = distance()
+ print("Distance: %.2f cm" % dist)
+27
+ time.sleep(1)
+except KeyboardInterrupt:
+ print("Exiting...")
+ GPIO.cleanup()
+
