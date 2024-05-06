@@ -1,0 +1,47 @@
+#include <SoftwareSerial.h>
+#define RX_PIN 2 
+#define TX_PIN 3 
+SoftwareSerial xbeeSerial(RX_PIN, TX_PIN); // RX, TX
+void setup () {
+ pinMode(RX_PIN, INPUT);
+ pinMode(TX_PIN, OUTPUT);
+ Serial.begin(9600);
+ xbeeSerial.begin(9600);
+}
+void loop() {
+ xbeeSerial.write('R');
+ delay(3000); 
+ 
+ xbeeSerial.write('G');
+ delay(3000); 
+}
+Receiver code:
+#include <SoftwareSerial.h>
+10
+#define RX_PIN 2 
+#define TX_PIN 3 
+#define RED_LED_PIN 
+#define GREEN_LED_PIN 5 
+SoftwareSerial xbeeSerial(RX_PIN, TX_PIN); // RX, TX
+void setup() {
+ pinMode(RED_LED_PIN, OUTPUT);
+ pinMode(GREEN_LED_PIN, OUTPUT);
+ pinMode(RX_PIN, INPUT);
+ pinMode(TX_PIN, OUTPUT);
+ Serial.begin(9600);
+ xbeeSerial.begin(9600);
+}
+void loop() {
+ if (xbeeSerial.available() > 0) {
+ char receivedChar = xbeeSerial.read();
+ if (receivedChar == 'R') {
+ digitalWrite(RED_LED_PIN, HIGH); 
+ delay(1000); 
+ digitalWrite(RED_LED_PIN, LOW); 
+ } else if (receivedChar == 'G') {
+ digitalWrite(GREEN_LED_PIN, HIGH); 
+ delay(1000); 
+ digitalWrite(GREEN_LED_PIN, LOW); 
+ }
+ }
+}
